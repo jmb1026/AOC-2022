@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace day01
 {
@@ -28,7 +29,7 @@ namespace day01
 
             bags.Sort((x, y) => y.Total - x.Total);
 
-            int total = bags[0].Total + bags[1].Total + bags[2].Total;
+            int total = bags.Take(3).Sum(b => b.Total);
             Console.WriteLine(total);
 
             Bag CreateBag()
