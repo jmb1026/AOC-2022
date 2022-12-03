@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace day01
@@ -7,31 +8,36 @@ namespace day01
     {
         static void Main(string[] args)
         {
-            const string inputFile = "input.txt";
+            List<Bag> bags = new();
 
+            const string inputFile = "input.txt";
             var lines = File.ReadAllLines(inputFile);
 
-            int max = 0;
-            int sum = 0;
+            var currentBag = CreateBag();
             foreach (var line in lines)
             {
-                if (line != string.Empty)
+                if (!string.IsNullOrEmpty(line))
                 {
-                    int number = int.Parse(line);
-                    sum += number;
+                    currentBag.Add(int.Parse(line));
                 }
                 else
                 {
-                    if (sum > max)
-                    {
-                        max = sum;
-                    }
-
-                    sum = 0;
+                    currentBag = CreateBag();
                 }
             }
 
-            Console.WriteLine($"max: {max}");
+            bags.Sort((x, y) => y.Total - x.Total);
+
+            int total = bags[0].Total + bags[1].Total + bags[2].Total;
+            Console.WriteLine(total);
+
+            Bag CreateBag()
+            {
+                var bag = new Bag();
+                bags.Add(bag);
+
+                return bag;
+            }
         }
     }
 }
