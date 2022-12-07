@@ -2,14 +2,13 @@
 
 var totalPriority = 0;
 
-foreach(var rs in lines)
+for (var index = 0; index < lines.Length; index += 3)
 {
-    var split = rs.Length / 2;
+    var one = lines[index];
+    var two = lines[index + 1];
+    var three = lines[index + 2];
 
-    var firstItems = rs.Substring(0, rs.Length / 2);
-    var secondItems = rs.Substring(rs.Length / 2);
-
-    var item = firstItems.Intersect(secondItems).First();
+    var item = one.Intersect(two).Intersect(three).First();
 
     var priority = (item - 64 <= 26) ? (26 + item - 64) : (item - 96);
     totalPriority += priority;
