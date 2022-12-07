@@ -7,8 +7,8 @@ foreach(var line in lines)
 {
     var round = line.Split(" ");
 
-    var usShape = ToShape(round[1]);
-    var themShape = ToShape(round[0]);
+    var themShape = ThemShape(round[0]);
+    var usShape = UsShape(themShape, round[1]);
 
     var us = ShapeValue(usShape);
     var them = ShapeValue(themShape);
@@ -24,13 +24,45 @@ foreach(var line in lines)
 
 Console.WriteLine($"Final Score - Us: {usScore}, Them: {themScore}");
 
-Shape ToShape(string input) 
+Shape ThemShape(string input) 
 {
-    if (input == "A" || input == "X") return Shape.Rock;
-    if (input == "B" || input == "Y") return Shape.Paper;
-    if (input == "C" || input == "Z") return Shape.Scissors;
+    if (input == "A") return Shape.Rock;
+    if (input == "B") return Shape.Paper;
+    if (input == "C") return Shape.Scissors;
 
     throw new ArgumentException(nameof(input), $"({input}) is invalid");
+}
+
+Shape UsShape(Shape otherShape, string input)
+{
+    // Draw
+    if (input == "Y") return otherShape;
+
+    // Lose
+    if (input == "X")
+    {
+        return otherShape switch 
+        {
+            Shape.Paper => Shape.Rock,
+            Shape.Rock => Shape.Scissors,
+            Shape.Scissors => Shape.Paper,
+            _ => throw new Exception()
+        };
+    }
+
+    // Win
+    if (input == "Z")
+    {
+        return otherShape switch 
+        {
+            Shape.Paper => Shape.Scissors,
+            Shape.Rock => Shape.Paper,
+            Shape.Scissors => Shape.Rock,
+            _ => throw new Exception()
+        };
+    }
+
+    throw new ArgumentException(nameof(input));
 }
 
 int ShapeValue(Shape shape) => shape switch
