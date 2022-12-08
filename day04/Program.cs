@@ -19,14 +19,22 @@ foreach(var input in pairs)
         Max = int.Parse(second[1]) 
     };
 
-    if (secondRange.Min >= firstRange.Min && secondRange.Max <= firstRange.Max)
+    // Part 1
+    // if (secondRange.Min >= firstRange.Min && secondRange.Max <= firstRange.Max)
+    // {
+    //     count++;
+    // }
+    // else if (firstRange.Min >= secondRange.Min && firstRange.Max <= secondRange.Max)
+    // {
+    //     count++;
+    // }
+
+    if (firstRange.Min > secondRange.Max || firstRange.Max < secondRange.Min)
     {
-        count++;
+        continue;
     }
-    else if (firstRange.Min >= secondRange.Min && firstRange.Max <= secondRange.Max)
-    {
-        count++;
-    }
+
+    count++;
 }
 
 Console.WriteLine(count);
