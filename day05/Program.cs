@@ -30,7 +30,7 @@ foreach(var line in lines)
             var crate = line[i * crateCharCount + 1];
             if (crate != ' ')
             {
-                Console.WriteLine($"Appending {crate} to create {i+1}");
+                Console.WriteLine($"Appending {crate} to crate {i+1}");
                 stacks[i].Append(crate);
             }
         }
@@ -47,11 +47,7 @@ foreach(var line in lines)
         var to = int.Parse(toSplit[1].First().ToString());
 
         Console.WriteLine($"move {count} from {from} to {to}");
-        for (int i = 0; i < count; i++)
-        {
-            // Console.WriteLine($"Moving from: {from}, to: {to}");
-            stacks!.Move(from, to);
-        }
+        stacks!.Move(count, from, to);
     }
 }
 
@@ -66,17 +62,19 @@ class Stack
         _crates.Add(crate);
     }
 
-    public char Pop()
+    public IEnumerable<char> Pop(int count)
     {
-        char crate = _crates[0];
-        _crates.RemoveAt(0);
+        var crates = new char[count];
+        _crates.CopyTo(0, crates, 0, count);
+        _crates.RemoveRange(0, count);
 
-        return crate;
+
+        return crates;
     }
 
-    public void Push(char crate)
+    public void Push(IEnumerable<char> crates)
     {
-        _crates.Insert(0, crate);
+        _crates.InsertRange(0, crates);
     }
 
     public char Top { get => _crates[0]; }
@@ -98,10 +96,10 @@ class StackList
         }
     }
 
-    public void Move(int from, int to)
+    public void Move(int count, int from, int to)
     {
-        char crate = _stacks[from-1].Pop();
-        _stacks[to-1].Push(crate);
+        var crates = _stacks[from-1].Pop(count);
+        _stacks[to-1].Push(crates);
     }
 
     public string Tops()
