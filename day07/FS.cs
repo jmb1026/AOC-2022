@@ -141,11 +141,7 @@ class FS
         while(toProcess.Any())
         {
             var node = toProcess.Dequeue();
-            if (node.Size <= 100000)
-            {
-                result.Add(node);
-            }
-
+            result.Add(node);
             foreach(var child in node.Children)
             {
                 if (child.isDir())

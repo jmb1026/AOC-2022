@@ -49,6 +49,32 @@ foreach(var line in lines)
     }
 }
 
+const int totalSpace = 70000000;
+const int requiredSpace = 30000000;
 var directories = fs.DirectoryWalk();
-Console.WriteLine($"Total Size of Directories <= 100000: {directories.Sum(d => d.Size)}");
 
+var root = directories.First();
+int unusedSpace = totalSpace - root.Size;
+
+Console.WriteLine($"Unused Space: {unusedSpace}");
+
+DirNode toDelete = root;
+int minOverflow = totalSpace;
+
+for(var i = 1; i < directories.Count(); i++)
+{
+    var node = directories.ElementAt(i);
+
+    int space = unusedSpace + node.Size;
+    if (space > requiredSpace)
+    {
+        int overflow = space - requiredSpace;
+        if (overflow < minOverflow)
+        {
+            minOverflow = overflow;
+            toDelete = node;
+        }
+    }
+}
+
+Console.WriteLine($"Deleting {toDelete.Name} would free up {toDelete.Size} bytes giving unused space of {unusedSpace+toDelete.Size} bytes");
