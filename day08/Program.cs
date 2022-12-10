@@ -13,30 +13,78 @@ for(var i = 0; i < rowCount; i++)
     }
 }
 
-int visibleTrees = 0;
+int maxScore = 0;
 for(var i = 0; i < rowCount; i++)
 {
-    if (i == 0 || i == rowCount-1) 
+    for(var j = 0; j < colCount; j++)
     {
-        visibleTrees += colCount;
-    }
-    else
-    {
-        for(var j = 0; j < colCount; j++)
-        {
-            if (j == 0 || j == colCount-1)
-            {
-                visibleTrees++;
-            }
-            else
-            {
-                visibleTrees += IsVisible(i, j);
-            }
-        }
+        var score = CalculateScenicScore(i, j);
+        maxScore = Math.Max(maxScore, score);
     }
 }
 
-Console.WriteLine($"Visible Trees: {visibleTrees}");
+Console.WriteLine($"Max Scenic Score: {maxScore}");
+
+int CalculateScenicScore(int row, int col)
+{
+    if (row == 0 || row == rowCount-1)
+        return 0;
+
+    if (col == 0 || col == colCount-1)
+        return 0;
+
+    int height = grid[row, col];
+
+    int up = 0;
+    for (int i = row - 1; i >= 0; i--)
+    {
+        if (grid[i, col] >= height)
+        {
+            up++;
+            break;
+        }
+
+        up++;
+    }
+
+    int down = 0;
+    for (int i = row + 1; i < rowCount; i++)
+    {
+        if (grid[i, col] >= height)
+        {
+            down++;
+            break;
+        }
+
+        down++;
+    }
+
+    int left = 0;
+    for (int j = col - 1; j >= 0; j--)
+    {
+        if (grid[row, j] >= height)
+        {
+            left++;
+            break;
+        }
+
+        left++;
+    }
+
+    int right = 0;
+    for (int j = col + 1; j < colCount; j++)
+    {
+        if (grid[row, j] >= height)
+        {
+            right++;
+            break;
+        }
+
+        right++;
+    }
+
+    return up * down * left * right;
+}
 
 int IsVisible(int row, int col)
 {
