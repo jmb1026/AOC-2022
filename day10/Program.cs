@@ -17,20 +17,21 @@ foreach(var line in lines)
     }
 }
 
-List<int> signals = new();
+List<char> pixels = new(40*6);
 
 int cycle = 1;
 while(instructions.Any())
 {
     var inst = instructions.First();
-
-    for (var i = 20; i <= cycle; i += 40)
+    
+    int pixel = (cycle - 1) % 40;
+    if (x.Value - 1 <= pixel && pixel <= x.Value + 1)
     {
-        if (i == cycle)
-        {
-            signals.Add(cycle*x.Value);
-            Console.WriteLine($"During cycle {cycle}, {inst.GetType().Name}, value of X is {x.Value} -- signal: {cycle*x.Value}");
-        }
+        pixels.Add('#');
+    }
+    else
+    {
+        pixels.Add('.');
     }
 
     inst.Cycle();
@@ -47,7 +48,11 @@ while(instructions.Any())
     cycle++;
 }
 
-Console.WriteLine($"Sum of {signals.Count} signals: {signals.Sum()}");
+for (var i = 0; i < 40*6; i++)
+{
+    if (i % 40 == 0) Console.WriteLine();
+    Console.Write(pixels[i]);
+}
 
 class Register
 {
