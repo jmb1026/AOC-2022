@@ -18,11 +18,13 @@ foreach(var line in lines)
     }
 }
 
-for (int i = 0; i < 20; i++)
+var worryReducer = monkeys.Select(m => m.Denom).Aggregate((long a, long b) => a * b);
+
+for (long i = 0; i < 10000; i++)
 {
     foreach(var monkey in monkeys)
     {
-        while(monkey.Inspect(monkeys));
+        while(monkey.Inspect(monkeys, worryReducer));
     }
 }
 
@@ -35,38 +37,40 @@ foreach (var monkey in monkeys)
 
 class Monkey
 {
-    private List<int> _items = new();
+    private List<long> _items = new();
 
-    public int Number { get; set; }
+    public long Number { get; set; }
 
-    public int InspectCount { get; private set; }
+    public long Denom { get; set; }
 
-    IEnumerable<int> Items { get => _items; }
+    public long InspectCount { get; private set; }
 
-    public Func<int, int>  Operation { get; set; }
+    IEnumerable<long> Items { get => _items; }
 
-    public Func<int, int>  Test { get; set; }
+    public Func<long, long>  Operation { get; set; }
 
-    public void Catch(int item) => _items.Add(item);
+    public Func<long, int>  Test { get; set; }
 
-    public bool Inspect(List<Monkey> monkeys)
+    public void Catch(long item) => _items.Add(item);
+
+    public bool Inspect(List<Monkey> monkeys, long worryReducer)
     {
         if (_items.Count == 0) return false;
+
 
         InspectCount++;
 
         var item = _items[0];
         _items.Remove(item);
 
-        item = Operation(item) / 3;
-
+        item = Operation(item) % worryReducer;
         var index = Test(item);
         ThrowTo(monkeys[index], item);
 
         return true;
     }
 
-    void ThrowTo(Monkey monkey, int item)
+    void ThrowTo(Monkey monkey, long item)
     {
         monkey.Catch(item);
     }
@@ -77,11 +81,11 @@ class MonkeyParser
     private Monkey _monkey = new Monkey();
 
     private bool _inTest = false;
-    private int _denom = 0;
+    private long _denom = 0;
     private int _trueIndex = 0;
     private int _falseIndex = 0;
 
-    public MonkeyParser(int number)
+    public MonkeyParser(long number)
     {
         _monkey.Number = number;
     }
@@ -111,7 +115,7 @@ class MonkeyParser
 
     private void ParseStartingItems(string line)
     {
-        var items = line.Split(": ")[1].Split(", ").Select(i => int.Parse(i));
+        var items = line.Split(": ")[1].Split(", ").Select(i => long.Parse(i));
         foreach (var item in items)
         {
             _monkey.Catch(item);
@@ -135,27 +139,26 @@ class MonkeyParser
             var left = op[0]; // this should always be 'old'
             var right = op[1];
             _monkey.Operation = Multiply(right);
-
         }
 
-        Func<int, int> Add(string operand)
+        Func<long, long> Add(string operand)
         {
             if (operand == "old")
             {
-                return (int item) => item + item;
+                return (long item) => item + item;
             }
 
-            return (int item) => item + int.Parse(operand);
+            return (long item) => item + long.Parse(operand);
         }
         
-        Func<int, int> Multiply(string operand)
+        Func<long, long> Multiply(string operand)
         {
             if (operand == "old")
             {
-                return (int item) => item * item;
+                return (long item) => item * item;
             }
 
-            return (int item) => item * int.Parse(operand);
+            return (long item) => item * long.Parse(operand);
         }
     }
 
@@ -163,7 +166,8 @@ class MonkeyParser
     {
         if (line.Contains("Test"))
         {
-            _denom = int.Parse(line.Split("divisible by ")[1]);
+            _denom = long.Parse(line.Split("divisible by ")[1]);
+            _monkey.Denom = _denom;
         }
         else if (line.Contains("If true"))
         {
@@ -173,7 +177,7 @@ class MonkeyParser
         {
             _falseIndex = int.Parse(line.Split("monkey ")[1]);
 
-            _monkey.Test = (int value) => (value % _denom) == 0 ? _trueIndex : _falseIndex;
+            _monkey.Test = (long value) => (value % _denom) == 0 ? _trueIndex : _falseIndex;
             _inTest = false;
         }
     }
