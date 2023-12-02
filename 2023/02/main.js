@@ -24,19 +24,17 @@ try {
         console.log(lines[i]);
         const game = parseGame(lines[i]);
         
-        const isPossible = (round) => {
-            return (
-                round.red <= inventory.red &&
-                round.green <= inventory.green &&
-                round.blue <= inventory.blue
-            );
-        };
-        if (game.rounds.every(round => isPossible(round))) {
-            console.log( "Game", game.id, "is possible");
-            sum += game.id;
-        } else {
-            console.log( "Game", game.id, "is NOT possible");
-        }
+        let minSet = { red: 0, green: 0, blue: 0 };
+        game.rounds.forEach(round => {
+            minSet = {
+                red: Math.max(minSet.red, round.red),
+                green: Math.max(minSet.green, round.green),
+                blue: Math.max(minSet.blue, round.blue),
+            };
+        });
+
+        const power = minSet.red * minSet.blue * minSet.green;
+        sum += power;
     }
 
     console.log(sum);
