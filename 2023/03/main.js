@@ -46,6 +46,8 @@ try {
             if (isSymbol(symbol)) {
                 let adjacencies = createAdjacencies(i, j);
 
+                const parts = [];
+
                 while(adjacencies.length > 0) {
                     const adj = adjacencies.shift();
                     const c = grid[adj.i][adj.j];
@@ -71,8 +73,13 @@ try {
                         }
 
                         // console.log(numberString, parseInt(numberString));
-                        sum += parseInt(numberString);
+                        parts.push(parseInt(numberString));
                     }
+                }
+
+                // If this part is a gear
+                if (parts.length == 2) {
+                    sum += parts[0] * parts[1];
                 }
             }
         }
